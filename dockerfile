@@ -22,4 +22,4 @@ RUN ./mvnw clean package -DskipTests
 EXPOSE 8081
 
 # Run the jar
-CMD ["java", "-jar", "target/NotesApp-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "target/NotesApp-0.0.1-SNAPSHOT.jar"]
