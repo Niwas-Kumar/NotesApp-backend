@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: my-springboot-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    port: 8081
