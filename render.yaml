@@ -2,5 +2,5 @@ services:
   - type: web
     name: my-springboot-app
     env: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: D:\NotesApp\NotesApp\dockerfile
     port: 8081
