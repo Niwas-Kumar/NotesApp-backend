@@ -1,4 +1,4 @@
-# Use an OpenJDK base image
+# Use OpenJDK 17
 FROM openjdk:17-jdk-slim
 
 # Set working directory
@@ -18,7 +18,7 @@ RUN chmod +x mvnw
 # Build the app
 RUN ./mvnw clean package -DskipTests
 
-# Expose the port your app runs on
+# Expose the port Spring Boot uses
 EXPOSE 8081
 
 # Run the jar
