@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "${app.frontend.url}")
@@ -21,6 +20,7 @@ public class NotesController {
         this.repo = repo;
     }
 
+    // --- CRUD ---
     @GetMapping("/notes")
     public List<Notes> list() { return repo.findAll(); }
 
@@ -53,24 +53,26 @@ public class NotesController {
         return ResponseEntity.noContent().build();
     }
 
+    // --- Share Note ---
     @PostMapping("/notes/{id}/share")
     public ResponseEntity<?> share(@PathVariable Long id) {
         Optional<Notes> opt = repo.findById(id);
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
         Notes note = opt.get();
         if (note.getLink() == null) {
-            String link = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
-            note.setLink(link);
+            String token = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+            note.setLink(token);
             repo.save(note);
         }
-        String frontendUrl = System.getenv().getOrDefault("APP_FRONTEND_URL", "http://localhost:5173");
-        String publicUrl = frontendUrl + "/n/" + note.getLink();
-        return ResponseEntity.ok().body(java.util.Map.of("publicUrl", publicUrl));
+        // Return only the token; frontend constructs full URL
+        return ResponseEntity.ok(java.util.Map.of("share_token", note.getLink()));
     }
 
+    // --- Public access via share token ---
     @GetMapping("/public/{link}")
     public ResponseEntity<Notes> publicByLink(@PathVariable String link) {
-        return repo.findByLink(link).map(ResponseEntity::ok)
+        return repo.findByLink(link)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }
