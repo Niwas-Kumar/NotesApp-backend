@@ -54,6 +54,7 @@ public class NotesController {
     }
 
     // --- Share Note ---
+    // --- Share Note ---
     @PostMapping("/notes/{id}/share")
     public ResponseEntity<?> share(@PathVariable Long id) {
         Optional<Notes> opt = repo.findById(id);
@@ -64,9 +65,18 @@ public class NotesController {
             note.setLink(token);
             repo.save(note);
         }
-        // Return only the token; frontend constructs full URL
-        return ResponseEntity.ok(java.util.Map.of("share_token", note.getLink()));
+
+        // Always return full frontend URL
+        String frontendUrl = System.getenv().getOrDefault(
+                "APP_FRONTEND_URL",
+                "https://notes-app-frontend-five-azure.vercel.app" // fallback
+        );
+        String publicUrl = frontendUrl + "/n/" + note.getLink();
+
+        return ResponseEntity.ok(java.util.Map.of("publicUrl", publicUrl));
     }
+
+
 
     // --- Public access via share token ---
     @GetMapping("/public/{link}")
