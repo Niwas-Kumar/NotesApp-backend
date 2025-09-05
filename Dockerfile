@@ -1,6 +1,6 @@
 
 # Stage 1: Build
-FROM openjdk:17-jdk-slim AS build
+FROM openjdk:21-jdk-slim AS build
 WORKDIR /app
 COPY . .
 RUN chmod +x mvnw
