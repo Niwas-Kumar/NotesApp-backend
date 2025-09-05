@@ -1,25 +1,13 @@
-# Use OpenJDK 17
-FROM openjdk:17-jdk-slim
-
-# Set working directory
+# Stage 1: Build
+FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
-
-# Copy Maven wrapper and pom
-COPY mvnw .
-COPY .mvn/ .mvn
-COPY pom.xml .
-
-# Copy source code
-COPY src/ src/
-
-# Give execute permission for mvnw
+COPY . .
 RUN chmod +x mvnw
-
-# Build the app
 RUN ./mvnw clean package -DskipTests
 
-# Expose the port Spring Boot uses
+# Stage 2: Run
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8081
-
-# Run the jar
-ENTRYPOINT ["java", "-jar", "target/NotesApp-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
